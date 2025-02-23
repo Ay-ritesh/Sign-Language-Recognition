@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Language</title>
+    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            height: 82vh;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            font-size: 30px;
+            font-weight: bold;
+            padding: 0px 0;
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #ff7e5f;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 126, 95, 0.5);
+        }
+
+        .btn-primary:hover {
+            background: #feb47b;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .btn-success:hover {
+            background: #66bb6a;
+        }
+
+        .upload-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .video-container, .result-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 45%;
+            text-align: center;
+            margin: auto;
+            height: 290px;
+        }
+
+        video, img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 270px;
+            
+        }
+
+        .loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-top: 6px solid white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" >
+        <header>Sign Language Detection</header>
+
+        <div class="upload-section">
+            <button class="btn btn-primary " style="margin-right: 400px;" id="uload">Upload</button>
+            <button class="btn btn-success" id="send">Predict</button>
+        </div>
+        <input type="file" id="fileinput" style="display: none;" />
+        <div class="loader" id="loading"></div>
+        <div style="display: flex;">
+
+        
+        <div class="video-container">
+            <h3 style="margin:0px; margin-bottom:5px;">Uploaded Image</h3>
+            <video autoplay id="video" poster="https://img.freepik.com/free-vector/hand-drawn-flat-tourists_23-2149056620.jpg?t=st=1740136024~exp=1740139624~hmac=93987ce5841450439f2636edb861498a7072e466aec5b80ae1388c40a2eb9e10&w=1800"></video>
+            <img id="photo" style="display: none;">
+        </div>
+        <div class="result-container">
+            <h3 style="margin:0px; margin-bottom:5px;">Prediction Result</h3>
+            <div class="res-part2"></div>
+        </div>
+
+    </div>
+    <div style="margin-top: 0px; text-align: center;">
+        <button style="
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0px 10px 20px rgba(255, 75, 43, 0.3);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            outline: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            margin-top: 11px;
+        " 
+        onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0px 15px 25px rgba(255, 75, 43, 0.5)';" 
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0px 10px 20px rgba(255, 75, 43, 0.3)';">
+            <a href="/live" class="logo" style="text-decoration: none; color: white; display: inline-block; width: 100%;">Go Live</a>
+        </button>
+    </div>
+    
+    </div>
+
+    </div>
+
+    <div id="loading">
+		<div class="loader"></div>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+	</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script>
+    var base_data = "";
+
+    function sendRequest(base64Data) {
+        if (base64Data) {
+            $("#loading").show();
+            $.ajax({
+                url: "../predict",
+                type: "post",
+                cache: false,
+                async: true,
+                crossDomain: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                data: JSON.stringify({ image: base64Data }),
+                success: function (res) {
+                    $(".res-part2").html("");
+                    var imageData = res.image;
+                    $(".res-part2").append("<img style='max-width: 100%; border-radius: 10px;' src='data:image/jpeg;base64," + imageData + "' alt='' />");
+                    $("#loading").hide();
+                }
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        $("#loading").hide();
+
+        $('#send').click(function () {
+            sendRequest(base_data);
+        });
+
+        $('#uload').click(function () {
+            $('#fileinput').trigger('click');
+        });
+
+        $("#fileinput").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var url = e.target.result;
+                    var img = new Image();
+                    img.crossOrigin = 'Anonymous';
+                    img.onload = function () {
+                        var canvas = document.createElement('CANVAS');
+                        var ctx = canvas.getContext('2d');
+                        canvas.height = this.height;
+                        canvas.width = this.width;
+                        ctx.drawImage(this, 0, 0);
+                        base_data = canvas.toDataURL('image/jpeg', 1.0).replace(/^data:image.+;base64,/, '');
+                        canvas = null;
+                    };
+                    img.src = url;
+                    $('#photo').attr('src', url).show();
+                    $('#video').hide();
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+</script>
+
+
+</body>
+
+</html>
